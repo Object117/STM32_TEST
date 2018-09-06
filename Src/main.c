@@ -48,6 +48,7 @@
 /* USER CODE BEGIN Includes */
 #include "led.h"
 #include "device_relay.h"
+#include "device_photoInterrupter.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -59,7 +60,9 @@ UART_HandleTypeDef huart1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
+static void SystemClock_Config(void);
+static void EXTI0_1_IRQHandler_Config(void);
+static void EXTI2_3_IRQHandler_Config(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -94,7 +97,8 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  EXTI0_1_IRQHandler_Config();
+  EXTI2_3_IRQHandler_Config();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -107,6 +111,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   LED_Init(LED3);
   PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
+  PIS_Init(PIS1);
 
   Relay_Init(RELAY1);
   Relay_Init(RELAY2);
@@ -118,7 +123,6 @@ int main(void)
   {
 
   /* USER CODE END WHILE */
-  // excuteRelayTest();
 
   /* USER CODE BEGIN 3 */
 
@@ -133,7 +137,7 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
-void SystemClock_Config(void)
+static void SystemClock_Config(void)
 {
 
   RCC_OscInitTypeDef RCC_OscInitStruct;
@@ -204,15 +208,35 @@ static void EXTI0_1_IRQHandler_Config(void) {
 	/*Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority */
 	HAL_NVIC_SetPriority(EXTI0_1_IRQn, 2, 0);
 	HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
+}
 
+static void EXTI2_3_IRQHandler_Config(void) {
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	/*Enable GPIOB clock */
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+
+	/*Configure PB.02 pin */
+	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
+	GPIO_InitStructure.Pull = GPIO_PULLDOWN;
+	GPIO_InitStructure.Pin = GPIO_PIN_2;
+
+	/*Enable and set EXTI lines 2 to 3 Interrupt*/
+	HAL_NVIC_SetPriority(EXTI2_3_IRQn, 3, 0);
+	HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	HAL_UART_Transmit(&huart1, (uint8_t*)TxBuffer, sizeof(TxBuffer), 10);		// TESTING
-	if(GPIO_Pin == GPIO_PIN_0) {
+	if(GPIO_Pin == USER_BUTTON_PIN) {
 		LED_Toggle(LED6);
 		excuteRelayTest_Interrupt();
 	}
+
+	if(GPIO_Pin == PIS1_PIN) {
+		LED_Toggle(LED4);
+	}
+
 }
 /* USER CODE END 4 */
 

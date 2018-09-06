@@ -12,9 +12,6 @@ GPIO_TypeDef* RELAY_PORT[RELAYn] = {RELAY1_GPIO_PORT	,
 const uint16_t RELAY_PIN[RELAYn] = {RELAY1_PIN		,
 									RELAY2_PIN		};
 
-static int BASE = 2;	// I/O pin connexted to the first relay
-static int NUM = 2;		// total number of all relays
-
 void Relay_Init(Relay_TypeDef relay) {
 	GPIO_InitTypeDef GPIO_InitStruct;
 

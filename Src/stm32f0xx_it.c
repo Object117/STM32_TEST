@@ -34,9 +34,9 @@
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx.h"
 #include "stm32f0xx_it.h"
-
 /* USER CODE BEGIN 0 */
-#define USER_BUTTON_PIN		GPIO_PIN_0
+#include "led.h"
+#include "device_photoInterrupter.h"
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -79,6 +79,16 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32f0xx.s).                    */
 /******************************************************************************/
+
+/**
+* @brief This function handles EXTI line 2 and 3 interrupts.
+*/
+void EXTI2_3_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI2_3_IRQn 0 */
+  /* USER CODE END EXTI2_3_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(PIS1_PIN);
+}
 
 /* USER CODE BEGIN 1 */
 void EXTI0_1_IRQHandler(void) {
