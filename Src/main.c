@@ -37,6 +37,7 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include <device_led.h>
 #include "main.h"
 #include "stm32f0xx_hal.h"
 #include "i2c.h"
@@ -46,7 +47,6 @@
 #include "usb.h"
 #include "gpio.h"
 /* USER CODE BEGIN Includes */
-#include "led.h"
 #include "device_relay.h"
 #include "device_photoInterrupter.h"
 /* USER CODE END Includes */
@@ -66,11 +66,9 @@ static void EXTI2_3_IRQHandler_Config(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 
 /**
@@ -81,16 +79,13 @@ static void EXTI2_3_IRQHandler_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
-
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -112,7 +107,6 @@ int main(void)
   LED_Init(LED3);
   PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
   PIS_Init(PIS1);
-
   Relay_Init(RELAY1);
   Relay_Init(RELAY2);
   /* USER CODE END 2 */
@@ -121,16 +115,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
   /* USER CODE END WHILE */
-
   /* USER CODE BEGIN 3 */
 
 //	 LED_Toggle(LED3);
 //	 LED_Toggle(LED5);
   }
   /* USER CODE END 3 */
-
 }
 
 /**
@@ -139,13 +130,12 @@ int main(void)
   */
 static void SystemClock_Config(void)
 {
-
   RCC_OscInitTypeDef RCC_OscInitStruct;
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
   RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
-    /**Initializes the CPU, AHB and APB busses clocks 
-    */
+  /**Initializes the CPU, AHB and APB busses clocks
+  */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSI48;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
@@ -159,8 +149,8 @@ static void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
-    /**Initializes the CPU, AHB and APB busses clocks 
-    */
+  /**Initializes the CPU, AHB and APB busses clocks
+  */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -195,32 +185,12 @@ static void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 static void EXTI0_1_IRQHandler_Config(void) {
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	/*Enable GPIOA clock */
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-
-	/*Configure PA.00 pin as input floating*/
-	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
-	GPIO_InitStructure.Pull = GPIO_PULLDOWN;
-	GPIO_InitStructure.Pin = GPIO_PIN_0;
-
 	/*Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority */
 	HAL_NVIC_SetPriority(EXTI0_1_IRQn, 2, 0);
 	HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
 }
 
 static void EXTI2_3_IRQHandler_Config(void) {
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	/*Enable GPIOB clock */
-	__HAL_RCC_GPIOB_CLK_ENABLE();
-
-	/*Configure PB.02 pin */
-	GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
-	GPIO_InitStructure.Pull = GPIO_PULLDOWN;
-	GPIO_InitStructure.Pin = GPIO_PIN_2;
-
 	/*Enable and set EXTI lines 2 to 3 Interrupt*/
 	HAL_NVIC_SetPriority(EXTI2_3_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);

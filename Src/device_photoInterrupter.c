@@ -23,11 +23,4 @@ void PIS_Init(PIS_TypeDef pis) {
 
 	HAL_GPIO_Init(PIS_PORT[pis], &GPIO_InitStruct);
 
-	/* Enable and set Photo Interrupter EXTI Interrupt*/
-	HAL_NVIC_SetPriority((IRQn_Type)(PIS1_EXTI_IRQn), 0x04, 0x00);
-	HAL_NVIC_EnableIRQ((IRQn_Type)(PIS1_EXTI_IRQn));
-
 }
-
-
-

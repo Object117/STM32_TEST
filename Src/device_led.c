@@ -5,7 +5,7 @@
  *      Author: leejh
  */
 
-#include"led.h"
+#include <device_led.h>
 
 /** @ Private_Variables
   * @{
@@ -99,10 +99,6 @@ void PB_Init(Button_TypeDef Button, ButtonMode_TypeDef Mode) {
 		GPIO_InitStruct.Pull = GPIO_NOPULL;
 		GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
 		HAL_GPIO_Init(BUTTON_PORT[Button], &GPIO_InitStruct);
-
-		/* Enable and set Button EXTI Interrupt to the lowest priority */
-		HAL_NVIC_SetPriority((IRQn_Type)(BUTTON_IRQn[Button]), 0x03, 0x00);
-		HAL_NVIC_EnableIRQ((IRQn_Type)(BUTTON_IRQn[Button]));
 	}
 }
 

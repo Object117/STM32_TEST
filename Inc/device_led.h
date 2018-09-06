@@ -5,8 +5,8 @@
  *      Author: leejh
  */
 
-#ifndef LED_H_
-#define LED_H_
+#ifndef DEVICE_LED_H_
+#define DEVICE_LED_H_
 
 /**
  * @brief LED Types Definition
@@ -114,4 +114,4 @@ void LED_Toggle(Led_TypeDef Led);
 void PB_Init(Button_TypeDef Button, ButtonMode_TypeDef Mode);
 uint32_t PB_GetState(Button_TypeDef Button);
 
-#endif /* LED_H_ */
+#endif /* DEVICE_LED_H_ */
