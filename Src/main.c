@@ -50,6 +50,7 @@
 #include "device_led.h"
 #include "device_relay.h"
 #include "device_photoInterrupter.h"
+#include "device_PIRsensor.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -67,6 +68,7 @@ void SystemClock_Config(void);
 /* Private function prototypes -----------------------------------------------*/
 static void EXTI0_1_IRQHandler_Config(void);
 static void EXTI2_3_IRQHandler_Config(void);
+static void EXTI4_15_IRQHandler_Config(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -96,6 +98,7 @@ int main(void)
   /* USER CODE BEGIN SysInit */
   EXTI0_1_IRQHandler_Config();
   EXTI2_3_IRQHandler_Config();
+  EXTI4_15_IRQHandler_Config();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -189,16 +192,22 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-static void EXTI0_1_IRQHandler_Config(void) {
+static void EXTI0_1_IRQHandler_Config(void) {		// User Button
 	/*Enable and set EXTI lines 0 to 1 Interrupt to the lowest priority */
 	HAL_NVIC_SetPriority(EXTI0_1_IRQn, 2, 0);
 	HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
 }
 
-static void EXTI2_3_IRQHandler_Config(void) {
+static void EXTI2_3_IRQHandler_Config(void) {		// Photo Interrupter
 	/*Enable and set EXTI lines 2 to 3 Interrupt*/
 	HAL_NVIC_SetPriority(EXTI2_3_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
+}
+
+static void EXTI4_15_IRQHandler_Config(void) {		// PIR Motion Sensor
+	/*Enable and set EXTI lines 4 to 15 Interrupt*/
+	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 4, 0);
+	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
@@ -210,6 +219,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	if(GPIO_Pin == PIS1_PIN) {
 		LED_Toggle(LED4);
+	}
+
+	if(GPIO_Pin == PIR1_SENSOR_PIN) {
+		LED_Toggle(LED3);
 	}
 
 }

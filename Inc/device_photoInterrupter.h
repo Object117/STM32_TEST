@@ -27,11 +27,9 @@ typedef enum {
 
 #define PISx_GPIO_CLK_ENABLE(__PIS__) do { if((__PIS__) == PIS1) PIS1_GPIO_CLK_ENABLE(); }while(0)
 
-#define PISx_GPIO_CLK_DISABLE(__PIS__) (((__PIS__) == PIS1) ? PIS1_GPIO_CLK_ENABLE() : 0)
+#define PISx_GPIO_CLK_DISABLE(__PIS__) (((__PIS__) == PIS1) ? PIS1_GPIO_CLK_DISABLE() : 0)
 
 void PIS_Init(PIS_TypeDef pis);
-
-
 
 
 #endif /* DEVICE_PHOTOINTERRUPTER_H_ */
