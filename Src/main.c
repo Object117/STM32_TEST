@@ -51,13 +51,13 @@
 #include "device_relay.h"
 #include "device_photoInterrupter.h"
 #include "device_PIRsensor.h"
+#include "stateMachine.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-uint8_t TxBuffer[20] = "Interrupt \n";
 UART_HandleTypeDef huart1;
 /* USER CODE END PV */
 
@@ -82,6 +82,7 @@ static void EXTI4_15_IRQHandler_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  STATE_MACHINE* state;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -118,10 +119,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  state = init_state_machine();
+
   while (1)
   {
   /* USER CODE END WHILE */
-
+	  run_state_machine(state);
   /* USER CODE BEGIN 3 */
 
 //	 LED_Toggle(LED3);
@@ -211,18 +214,19 @@ static void EXTI4_15_IRQHandler_Config(void) {		// PIR Motion Sensor
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	HAL_UART_Transmit(&huart1, (uint8_t*)TxBuffer, sizeof(TxBuffer), 10);		// TESTING
+	debug_print("Interrupt");
+	//HAL_UART_Transmit(&huart1, (uint8_t*)TxBuffer, sizeof(TxBuffer), 10);		// TESTING
 	if(GPIO_Pin == USER_BUTTON_PIN) {
-		LED_Toggle(LED6);
+		LED_Toggle(LED6);		// BLUE LED
 		excuteRelayTest_Interrupt();
 	}
 
 	if(GPIO_Pin == PIS1_PIN) {
-		LED_Toggle(LED4);
+		LED_Toggle(LED4);		// ORANGE LED
 	}
 
 	if(GPIO_Pin == PIR1_SENSOR_PIN) {
-		LED_Toggle(LED3);
+		LED_Toggle(LED3);		// RED LED
 	}
 
 }
