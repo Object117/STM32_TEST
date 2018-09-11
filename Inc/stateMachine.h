@@ -18,6 +18,17 @@ typedef enum {
 	NONE_STATE
 } MACHINE_STATE;
 
+typedef enum {
+	DOOR_CLOSE = 0	,
+	DOOR_OPEN	,
+	SWITCH_CLOSE	,
+	SWITCH_OPEN		,
+	PIR_NO_DETECT	,
+	PIR_DETECTING
+} ACTION;
+
+ACTION doing_action;
+
 STATE_MACHINE* init_state_machine(void);
 void run_state_machine(STATE_MACHINE* state);
 

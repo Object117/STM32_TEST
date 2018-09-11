@@ -58,6 +58,7 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+uint8_t TxBuffer[] = "Interrupt!\n";
 UART_HandleTypeDef huart1;
 /* USER CODE END PV */
 
@@ -72,6 +73,7 @@ static void EXTI4_15_IRQHandler_Config(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+
 /* USER CODE END 0 */
 
 /**
@@ -120,7 +122,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   state = init_state_machine();
-
+  doing_action = DOOR_CLOSE;
   while (1)
   {
   /* USER CODE END WHILE */
@@ -214,19 +216,25 @@ static void EXTI4_15_IRQHandler_Config(void) {		// PIR Motion Sensor
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	debug_print("Interrupt");
-	//HAL_UART_Transmit(&huart1, (uint8_t*)TxBuffer, sizeof(TxBuffer), 10);		// TESTING
-	if(GPIO_Pin == USER_BUTTON_PIN) {
-		LED_Toggle(LED6);		// BLUE LED
-		excuteRelayTest_Interrupt();
+
+	uint8_t door_open[] = "DOOR_OPEN";
+	uint8_t switch_open[] = "SWITCH_OPEN";
+	uint8_t door_close[] = "DOOR_CLOSE";
+
+	//	HAL_UART_Transmit(&huart1, (uint8_t*)TxBuffer, sizeof(TxBuffer), 10);		// TESTING
+	if((GPIO_Pin == PIS1_PIN) && (doing_action == DOOR_CLOSE)) {
+		HAL_UART_Transmit(&huart1, (uint8_t*)door_open, sizeof(door_open), 10);		// TESTING
+		doing_action = DOOR_OPEN;
 	}
 
-	if(GPIO_Pin == PIS1_PIN) {
-		LED_Toggle(LED4);		// ORANGE LED
+	if((GPIO_Pin == USER_BUTTON_PIN) && (doing_action == DOOR_OPEN)) {
+		HAL_UART_Transmit(&huart1, (uint8_t*)switch_open, sizeof(switch_open), 10);		// TESTING
+		doing_action = SWITCH_OPEN;
 	}
 
-	if(GPIO_Pin == PIR1_SENSOR_PIN) {
-		LED_Toggle(LED3);		// RED LED
+	if((GPIO_Pin == PIR1_SENSOR_PIN) && (doing_action == SWITCH_OPEN)) {
+		HAL_UART_Transmit(&huart1, (uint8_t*)door_close, sizeof(door_close), 10);		// TESTING
+		doing_action = DOOR_CLOSE;
 	}
 
 }
