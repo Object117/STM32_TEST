@@ -61,7 +61,8 @@
 uint8_t TxBuffer[] = "Interrupt!\n";
 UART_HandleTypeDef huart1;
 
-USER_ACTION standby_functions = {STANDBY_inner_door_open	,
+USER_ACTION standby_functions = {STANDBY	,
+								STANDBY_inner_door_open	,
 								STANDBY_inner_door_close	,
 								STANDBY_extdoor_open	,
 								STANDBY_extdoor_close	,
@@ -69,15 +70,17 @@ USER_ACTION standby_functions = {STANDBY_inner_door_open	,
 								STANDBY_baby_none
 };
 
-USER_ACTION ready_functions = {READY_inner_door_open	,
-						READY_inner_door_close	,
-						READY_extdoor_open	,
-						READY_extdoor_close	,
-						READY_baby_in	,
-						READY_baby_none
+USER_ACTION ready_functions = {READY	,
+							READY_inner_door_open	,
+							READY_inner_door_close	,
+							READY_extdoor_open	,
+							READY_extdoor_close	,
+							READY_baby_in	,
+							READY_baby_none
 };
 
-USER_ACTION enter_functions = {ENTER_inner_door_open	,
+USER_ACTION enter_functions = {ENTER	,
+						ENTER_inner_door_open	,
 						ENTER_inner_door_close	,
 						ENTER_extdoor_open	,
 						ENTER_extdoor_close	,
@@ -85,7 +88,8 @@ USER_ACTION enter_functions = {ENTER_inner_door_open	,
 						ENTER_baby_none
 };
 
-USER_ACTION protection_functions = {PROTECTION_inner_door_open	,
+USER_ACTION protection_functions = {PROTECTION		,
+								PROTECTION_inner_door_open	,
 								PROTECTION_inner_door_close		,
 								PROTECTION_extdoor_open		,
 								PROTECTION_extdoor_close	,
@@ -93,7 +97,8 @@ USER_ACTION protection_functions = {PROTECTION_inner_door_open	,
 								PROTECTION_baby_none
 };
 
-USER_ACTION confirm_functions = {CONFIRM_inner_door_open	,
+USER_ACTION confirm_functions = {CONFIRM		,
+							CONFIRM_inner_door_open	,
 							CONFIRM_inner_door_close	,
 							CONFIRM_extdoor_open	,
 							CONFIRM_extdoor_close	,
@@ -101,14 +106,22 @@ USER_ACTION confirm_functions = {CONFIRM_inner_door_open	,
 							CONFIRM_baby_none
 };
 
-USER_ACTION exit_functions = {EXIT_inner_door_open	,
-						EXIT_inner_door_close	,
-						EXIT_extdoor_open	,
-						EXIT_extdoor_close	,
-						EXIT_baby_in	,
-						EXIT_baby_none
+USER_ACTION exit_functions = {EXIT		,
+							EXIT_inner_door_open	,
+							EXIT_inner_door_close	,
+							EXIT_extdoor_open	,
+							EXIT_extdoor_close	,
+							EXIT_baby_in	,
+							EXIT_baby_none
 };
 
+USER_ACTION* tCurrent_state;
+USER_ACTION* tStandby_state = &standby_functions;
+USER_ACTION* tReady_state = &ready_functions;
+USER_ACTION* tEnter_state = &enter_functions;
+USER_ACTION* tProtection_state = &protection_functions;
+USER_ACTION* tConfirm_state = &confirm_functions;
+USER_ACTION* tExit_state = &exit_functions;
 
 /* USER CODE END PV */
 
@@ -170,15 +183,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
-  //  state = init_state_machine();
+  tCurrent_state = tStandby_state;
+  tCurrent_state->currentState = STANDBY;		// Initialize
 
   while (1)
   {
-	  /* USER CODE END WHILE */
-	  //run_state_machine(state);
-
-	  /* USER CODE BEGIN 3 */
 
   }
   /* USER CODE END 3 */
@@ -264,34 +273,104 @@ static void EXTI4_15_IRQHandler_Config(void) {		// PIR Motion Sensor
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 }
 
-
 #if 1		//
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+void HAL_GPIO_EXTI_Callback(uint16_t Action) {
 
-	uint8_t door_open[] = "DOOR_OPEN";
+	uint8_t door[] = "DOOR";
 	uint8_t switch_open[] = "SWITCH_OPEN";
 	uint8_t door_close[] = "DOOR_CLOSE";
 
+#if 1
+	switch(Action) {
+		case EXT_DOOR_CLOSE	:
+			HAL_UART_Transmit(&huart1, (uint8_t*)door, sizeof(door), 10);		// TESTING
 
-	USER_ACTION* tStandby_state = &standby_functions;
-	USER_ACTION* tReady_state = &ready_functions;
-	USER_ACTION* tEnter_state = &enter_functions;
+			tCurrent_state->extdoor_open();
+			break;
 
-	if(GPIO_Pin == PIS1_PIN) {
+//		case INNER_DOOR_OPEN	:
+//			break;
+
+		case MOTION_DETECTING	:
+
+			break;
+
+		case USER_BUTTON_PIN	:
+
+			break;
+
+		default	:
+
+			break;
+	}
+
+#else
+	switch(Action) {
+		case EXT_DOOR_OPEN	:
+
+			break;
+
+//		case INNER_DOOR_OPEN	:
+//			break;
+
+		case MOTION_DETECTING	:
+
+			break;
+
+		case USER_BUTTON_PIN	:
+
+			break;
+
+		default	:
+
+			break;
+	}
+
+
+	if(Action == EXT_DOOR_OPEN) {
 		HAL_UART_Transmit(&huart1, (uint8_t*)door_open, sizeof(door_open), 10);		// TESTING
-		tStandby_state->inner_door_open();
+
+		if(tCurrent_state == tStandby_state) {		// Current state is "standby state"
+			switch(tCurrent_state->currentState) {
+				case STANDBY	:
+					tCurrent_state->extdoor_open();
+
+					tCurrent_state = tReady_state;			// Changing state	:Ready state
+					tCurrent_state->currentState = READY;
+
+					break;
+
+				default	:
+					break;
+			}
+		}
+
 	}
 
-	if(GPIO_Pin == USER_BUTTON_PIN){
+
+
+	if(Action == USER_BUTTON_PIN){
 		HAL_UART_Transmit(&huart1, (uint8_t*)switch_open, sizeof(switch_open), 10);		// TESTING
-		tReady_state->inner_door_open();
+
+		switch(tCurrent_state->currentState) {
+			case READY	:
+				tReady_state->inner_door_open();
+				break;
+
+			default	:
+
+				break;
+		}
+
+
+
 	}
 
-	if(GPIO_Pin == PIR1_SENSOR_PIN) {
+	if(Action == MOTION_DETECTING) {
 		HAL_UART_Transmit(&huart1, (uint8_t*)door_close, sizeof(door_close), 10);		// TESTING
-		tEnter_state->inner_door_open();
+		//tEnter_state->inner_door_open();
 	}
-
+#endif
 
 }
 

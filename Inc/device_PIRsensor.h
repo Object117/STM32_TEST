@@ -23,6 +23,8 @@ typedef enum {
 #define PIR1_GPIO_CLK_DISABLE()		__HAL_RCC_GPIOB_CLK_DISABLE()
 #define PIR1_EXTI_IRQn				EXTI4_15_IRQn
 
+#define MOTION_DETECTING			PIR1_SENSOR_PIN		// Redefine.
+
 #define PIRx_GPIO_CLK_ENABLE(__PIR__) do { if((__PIR__) == PIR_SENSOR1) PIR1_GPIO_CLK_ENABLE(); }while(0)
 #define PIRx_GPIO_CLK_DISABLE(__PIR__) (((__PIR__) == PIR_SENSOR1) ? PIR1_GPIO_CLK_DISABLE() : 0)
 

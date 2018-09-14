@@ -8,9 +8,27 @@
 #ifndef STATEMACHINE_H_
 #define STATEMACHINE_H_
 
-#if 1
+typedef enum {
+	STANDBY = 0	,
+	READY		,
+	ENTER		,
+	PROTECTION	,
+	CONFIRM		,
+	EXIT		,
+	NONE_STATE
+} MACHINE_STATE;
+
+typedef enum {
+	DOOR_CLOSE = 0	,
+	DOOR_OPEN	,
+	SWITCH_CLOSE	,
+	SWITCH_OPEN		,
+	PIR_NO_DETECT	,
+	PIR_DETECTING
+} ACTION;
 
 typedef struct action {
+	MACHINE_STATE currentState;
 	void (*inner_door_open)(void);
 	void (*inner_door_close)(void);
 	void (*extdoor_open)(void);
@@ -61,28 +79,5 @@ void EXIT_extdoor_open(void);
 void EXIT_extdoor_close(void);
 void EXIT_baby_in(void);
 void EXIT_baby_none(void);
-
-
-#endif
-//--------
-
-
-
-typedef enum {
-	INIT_STATE = 0	,
-	READY_STATE	,
-	RUNNING_STATE	,
-	STOP_STATE	,
-	NONE_STATE
-} MACHINE_STATE;
-
-typedef enum {
-	DOOR_CLOSE = 0	,
-	DOOR_OPEN	,
-	SWITCH_CLOSE	,
-	SWITCH_OPEN		,
-	PIR_NO_DETECT	,
-	PIR_DETECTING
-} ACTION;
 
 #endif /* STATEMACHINE_H_ */

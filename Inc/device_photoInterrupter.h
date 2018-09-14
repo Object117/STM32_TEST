@@ -25,6 +25,8 @@ typedef enum {
 #define PIS1_GPIO_CLK_DISABLE()		__HAL_RCC_GPIOB_CLK_DISABLE()
 #define PIS1_EXTI_IRQn				EXTI2_3_IRQn
 
+#define EXT_DOOR_CLOSE				PIS1_PIN	// Redefine.
+
 #define PISx_GPIO_CLK_ENABLE(__PIS__) do { if((__PIS__) == PIS1) PIS1_GPIO_CLK_ENABLE(); }while(0)
 
 #define PISx_GPIO_CLK_DISABLE(__PIS__) (((__PIS__) == PIS1) ? PIS1_GPIO_CLK_DISABLE() : 0)
