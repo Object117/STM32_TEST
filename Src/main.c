@@ -60,6 +60,56 @@
 /* Private variables ---------------------------------------------------------*/
 uint8_t TxBuffer[] = "Interrupt!\n";
 UART_HandleTypeDef huart1;
+
+USER_ACTION standby_functions = {STANDBY_inner_door_open	,
+								STANDBY_inner_door_close	,
+								STANDBY_extdoor_open	,
+								STANDBY_extdoor_close	,
+								STANDBY_baby_in			,
+								STANDBY_baby_none
+};
+
+USER_ACTION ready_functions = {READY_inner_door_open	,
+						READY_inner_door_close	,
+						READY_extdoor_open	,
+						READY_extdoor_close	,
+						READY_baby_in	,
+						READY_baby_none
+};
+
+USER_ACTION enter_functions = {ENTER_inner_door_open	,
+						ENTER_inner_door_close	,
+						ENTER_extdoor_open	,
+						ENTER_extdoor_close	,
+						ENTER_baby_in	,
+						ENTER_baby_none
+};
+
+USER_ACTION protection_functions = {PROTECTION_inner_door_open	,
+								PROTECTION_inner_door_close		,
+								PROTECTION_extdoor_open		,
+								PROTECTION_extdoor_close	,
+								PROTECTION_baby_in		,
+								PROTECTION_baby_none
+};
+
+USER_ACTION confirm_functions = {CONFIRM_inner_door_open	,
+							CONFIRM_inner_door_close	,
+							CONFIRM_extdoor_open	,
+							CONFIRM_extdoor_close	,
+							CONFIRM_baby_in			,
+							CONFIRM_baby_none
+};
+
+USER_ACTION exit_functions = {EXIT_inner_door_open	,
+						EXIT_inner_door_close	,
+						EXIT_extdoor_open	,
+						EXIT_extdoor_close	,
+						EXIT_baby_in	,
+						EXIT_baby_none
+};
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -84,11 +134,10 @@ static void EXTI4_15_IRQHandler_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  STATE_MACHINE* state;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
-
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
@@ -121,16 +170,16 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  state = init_state_machine();
-  doing_action = DOOR_CLOSE;
+
+  //  state = init_state_machine();
+
   while (1)
   {
-  /* USER CODE END WHILE */
-	  run_state_machine(state);
-  /* USER CODE BEGIN 3 */
+	  /* USER CODE END WHILE */
+	  //run_state_machine(state);
 
-//	 LED_Toggle(LED3);
-//	 LED_Toggle(LED5);
+	  /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 
@@ -215,6 +264,38 @@ static void EXTI4_15_IRQHandler_Config(void) {		// PIR Motion Sensor
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 }
 
+
+#if 1		//
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+
+	uint8_t door_open[] = "DOOR_OPEN";
+	uint8_t switch_open[] = "SWITCH_OPEN";
+	uint8_t door_close[] = "DOOR_CLOSE";
+
+
+	USER_ACTION* tStandby_state = &standby_functions;
+	USER_ACTION* tReady_state = &ready_functions;
+	USER_ACTION* tEnter_state = &enter_functions;
+
+	if(GPIO_Pin == PIS1_PIN) {
+		HAL_UART_Transmit(&huart1, (uint8_t*)door_open, sizeof(door_open), 10);		// TESTING
+		tStandby_state->inner_door_open();
+	}
+
+	if(GPIO_Pin == USER_BUTTON_PIN){
+		HAL_UART_Transmit(&huart1, (uint8_t*)switch_open, sizeof(switch_open), 10);		// TESTING
+		tReady_state->inner_door_open();
+	}
+
+	if(GPIO_Pin == PIR1_SENSOR_PIN) {
+		HAL_UART_Transmit(&huart1, (uint8_t*)door_close, sizeof(door_close), 10);		// TESTING
+		tEnter_state->inner_door_open();
+	}
+
+
+}
+
+#else		//
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	uint8_t door_open[] = "DOOR_OPEN";
@@ -238,6 +319,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	}
 
 }
+#endif
 /* USER CODE END 4 */
 
 /**
