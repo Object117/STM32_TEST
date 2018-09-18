@@ -61,67 +61,7 @@
 uint8_t TxBuffer[] = "Interrupt!\n";
 UART_HandleTypeDef huart1;
 
-USER_ACTION standby_functions = {STANDBY	,
-								STANDBY_inner_door_open	,
-								STANDBY_inner_door_close	,
-								STANDBY_extdoor_open	,
-								STANDBY_extdoor_close	,
-								STANDBY_baby_in			,
-								STANDBY_baby_none
-};
-
-USER_ACTION ready_functions = {READY	,
-							READY_inner_door_open	,
-							READY_inner_door_close	,
-							READY_extdoor_open	,
-							READY_extdoor_close	,
-							READY_baby_in	,
-							READY_baby_none
-};
-
-USER_ACTION enter_functions = {ENTER	,
-						ENTER_inner_door_open	,
-						ENTER_inner_door_close	,
-						ENTER_extdoor_open	,
-						ENTER_extdoor_close	,
-						ENTER_baby_in	,
-						ENTER_baby_none
-};
-
-USER_ACTION protection_functions = {PROTECTION		,
-								PROTECTION_inner_door_open	,
-								PROTECTION_inner_door_close		,
-								PROTECTION_extdoor_open		,
-								PROTECTION_extdoor_close	,
-								PROTECTION_baby_in		,
-								PROTECTION_baby_none
-};
-
-USER_ACTION confirm_functions = {CONFIRM		,
-							CONFIRM_inner_door_open	,
-							CONFIRM_inner_door_close	,
-							CONFIRM_extdoor_open	,
-							CONFIRM_extdoor_close	,
-							CONFIRM_baby_in			,
-							CONFIRM_baby_none
-};
-
-USER_ACTION exit_functions = {EXIT		,
-							EXIT_inner_door_open	,
-							EXIT_inner_door_close	,
-							EXIT_extdoor_open	,
-							EXIT_extdoor_close	,
-							EXIT_baby_in	,
-							EXIT_baby_none
-};
-
 USER_ACTION* tCurrent_state;
-USER_ACTION* tStandby_state = &standby_functions;
-USER_ACTION* tReady_state = &ready_functions;
-USER_ACTION* tEnter_state = &enter_functions;
-USER_ACTION* tProtection_state = &protection_functions;
-USER_ACTION* tConfirm_state = &confirm_functions;
-USER_ACTION* tExit_state = &exit_functions;
 
 /* USER CODE END PV */
 
@@ -151,6 +91,7 @@ int main(void)
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
+
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
@@ -177,17 +118,29 @@ int main(void)
   LED_Init(LED3);
   PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
   PIS_Init(PIS1);
+  PIS_Init(PIS2);
   Relay_Init(RELAY1);
   Relay_Init(RELAY2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  tCurrent_state = tStandby_state;
-  tCurrent_state->currentState = STANDBY;		// Initialize
+  extdoor_status = EXT_DOOR_CLOSE;
+  innerdoor_state = INNER_DOOR_CLOSE;
+  baby_state = BABY_NONE;
 
+  changeingState = initialize_state();
   while (1)
   {
+  /* USER CODE END WHILE */
+  /* USER CODE BEGIN 3 */
+		tCurrent_state = change_state();
+		tCurrent_state->extdoor_open();
+		tCurrent_state->extdoor_close();
+		tCurrent_state->inner_door_open();
+		tCurrent_state->inner_door_close();
+		tCurrent_state->baby_in();
+		tCurrent_state->baby_none();
 
   }
   /* USER CODE END 3 */
@@ -276,33 +229,52 @@ static void EXTI4_15_IRQHandler_Config(void) {		// PIR Motion Sensor
 #if 1		//
 void HAL_GPIO_EXTI_Callback(uint16_t Action) {
 
-	uint8_t door[] = "DOOR";
-	uint8_t switch_open[] = "SWITCH_OPEN";
-	uint8_t door_close[] = "DOOR_CLOSE";
+	uint8_t Detecting[] = "Detecting";
+	uint8_t exception[] = " exception";
+	uint8_t extdoor_close[] = " EXT_DOOR CLOSE";
+	uint8_t extdoor_open[] = " EXT_DOOR OPEN";
+	uint8_t indoor_close[] = " IN_DOOR CLOSE";
+	uint8_t indoor_open[] = " IN_DOOR OPEN";
 
 #if 1
-	switch(Action) {
-		case EXT_DOOR_CLOSE	:
-			HAL_UART_Transmit(&huart1, (uint8_t*)door, sizeof(door), 10);		// TESTING
 
-			tCurrent_state->extdoor_open();
+	switch(HAL_GPIO_ReadPin(EXT_DOOR_PORT, EXT_DOOR_PIN)) {
+		case GPIO_PIN_SET	:
+			extdoor_status = EXT_DOOR_CLOSE;
+//			HAL_UART_Transmit(&huart1, (uint8_t*)extdoor_close, sizeof(extdoor_close), 10);		// TESTING
 			break;
 
-//		case INNER_DOOR_OPEN	:
-//			break;
-
-		case MOTION_DETECTING	:
-
+		case GPIO_PIN_RESET	:
+			extdoor_status = EXT_DOOR_OPEN;
+//			HAL_UART_Transmit(&huart1, (uint8_t*)extdoor_open, sizeof(extdoor_open), 10);		// TESTING
 			break;
 
-		case USER_BUTTON_PIN	:
-
-			break;
-
-		default	:
-
+		default		:	// exception
+			extdoor_status = EXT_DOOR_CLOSE;
+//			HAL_UART_Transmit(&huart1, (uint8_t*)exception, sizeof(exception), 10);		// TESTING
 			break;
 	}
+
+	switch(HAL_GPIO_ReadPin(INNER_DOOR_PORT, INNER_DOOR_PIN)) {
+		case GPIO_PIN_SET	:
+			innerdoor_state = INNER_DOOR_CLOSE;
+			break;
+
+		case GPIO_PIN_RESET	:
+			innerdoor_state = INNER_DOOR_OPEN;
+			break;
+
+		default		:	// exception
+			innerdoor_state = INNER_DOOR_CLOSE;
+			break;
+	}
+
+	if(Action == MOTION_DETECTING) {
+		HAL_UART_Transmit(&huart1, (uint8_t*)Detecting, sizeof(Detecting), 10);		// TESTING
+		baby_state = BABY_IN;
+	}
+
+
 
 #else
 	switch(Action) {

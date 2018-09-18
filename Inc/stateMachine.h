@@ -19,13 +19,19 @@ typedef enum {
 } MACHINE_STATE;
 
 typedef enum {
-	DOOR_CLOSE = 0	,
-	DOOR_OPEN	,
-	SWITCH_CLOSE	,
-	SWITCH_OPEN		,
-	PIR_NO_DETECT	,
-	PIR_DETECTING
-} ACTION;
+	EXT_DOOR_CLOSE = 0	,
+	EXT_DOOR_OPEN
+} EXT_DOOR_ACTION;
+
+typedef enum {
+	INNER_DOOR_CLOSE = 0	,
+	INNER_DOOR_OPEN
+}INNER_DOOR_ACTION;
+
+typedef enum {
+	BABY_NONE = 0	,
+	BABY_IN
+}BABY_ACTION;
 
 typedef struct action {
 	MACHINE_STATE currentState;
@@ -37,6 +43,14 @@ typedef struct action {
 	void (*baby_none)(void);
 } USER_ACTION;
 
+EXT_DOOR_ACTION extdoor_status;
+INNER_DOOR_ACTION innerdoor_state;
+BABY_ACTION baby_state;
+
+USER_ACTION* changeingState;
+
+USER_ACTION* initialize_state(void);
+USER_ACTION* change_state();
 
 void STANDBY_inner_door_open(void);
 void STANDBY_inner_door_close(void);
