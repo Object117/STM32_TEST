@@ -15,6 +15,7 @@ typedef enum {
 	PROTECTION	,
 	CONFIRM		,
 	EXIT		,
+	EMERGENCY	,
 	NONE_STATE
 } MACHINE_STATE;
 
@@ -94,4 +95,10 @@ void EXIT_extdoor_close(void);
 void EXIT_baby_in(void);
 void EXIT_baby_none(void);
 
+void EMER_inner_door_open(void);
+void EMER_inner_door_close(void);
+void EMER_extdoor_open(void);
+void EMER_extdoor_close(void);
+void EMER_baby_in(void);
+void EMER_baby_none(void);
 #endif /* STATEMACHINE_H_ */

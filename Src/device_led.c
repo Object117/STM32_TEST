@@ -65,7 +65,19 @@ void LED_OFF(Led_TypeDef Led) {
 
 void LED_Toggle(Led_TypeDef Led) {
 	HAL_GPIO_TogglePin(LED_PORT[Led], LED_PIN[Led]);
-	HAL_Delay(500);
+}
+
+void LED_ALL_BLINK(Led_TypeDef Led1, Led_TypeDef Led2, Led_TypeDef Led3, Led_TypeDef Led4) {
+	HAL_GPIO_WritePin(LED_PORT[Led1], LED_PIN[Led1], GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_PORT[Led2], LED_PIN[Led2], GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_PORT[Led3], LED_PIN[Led3], GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_PORT[Led4], LED_PIN[Led4], GPIO_PIN_RESET);
+	HAL_Delay(200);
+	HAL_GPIO_WritePin(LED_PORT[Led1], LED_PIN[Led1], GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED_PORT[Led2], LED_PIN[Led2], GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED_PORT[Led3], LED_PIN[Led3], GPIO_PIN_SET);
+	HAL_GPIO_WritePin(LED_PORT[Led4], LED_PIN[Led4], GPIO_PIN_SET);
+	HAL_Delay(200);
 }
 
 /**

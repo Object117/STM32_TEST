@@ -68,12 +68,22 @@ USER_ACTION exit_functions = {EXIT		,
 							EXIT_baby_none
 };
 
+USER_ACTION emergency_functions = {EMERGENCY	,
+		EMER_inner_door_open	,
+		EMER_inner_door_close	,
+		EMER_extdoor_open	,
+		EMER_extdoor_close	,
+		EMER_baby_in	,
+		EMER_baby_none
+};
+
 USER_ACTION* tStandby_state = &standby_functions;
 USER_ACTION* tReady_state = &ready_functions;
 USER_ACTION* tEnter_state = &enter_functions;
 USER_ACTION* tProtection_state = &protection_functions;
 USER_ACTION* tConfirm_state = &confirm_functions;
 USER_ACTION* tExit_state = &exit_functions;
+USER_ACTION* tEmergency_state = &emergency_functions;
 
 USER_ACTION* initialize_state(void) {
 	return tStandby_state;
@@ -222,7 +232,9 @@ void PROTECTION_inner_door_close(void) {
 }
 
 void PROTECTION_extdoor_open(void) {
-
+	if(extdoor_status == EXT_DOOR_OPEN) {
+		changeingState = tEmergency_state;
+	}
 }
 
 void PROTECTION_extdoor_close(void) {
@@ -313,5 +325,29 @@ void EXIT_baby_in(void) {
 }
 
 void EXIT_baby_none(void) {
+
+}
+
+void EMER_inner_door_open(void) {
+
+}
+
+void EMER_inner_door_close(void) {
+
+}
+
+void EMER_extdoor_open(void) {
+	LED_ALL_BLINK(LED_RED, LED_GREEN, LED_BLUE, LED_ORANGE);
+}
+
+void EMER_extdoor_close(void) {
+
+}
+
+void EMER_baby_in(void) {
+
+}
+
+void EMER_baby_none(void) {
 
 }
