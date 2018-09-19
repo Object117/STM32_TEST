@@ -29,8 +29,12 @@ void Relay_Init(Relay_TypeDef relay) {
 	HAL_GPIO_WritePin(RELAY_PORT[relay], RELAY_PIN[relay], GPIO_PIN_RESET);
 }
 
-void excuteRelayTest_Interrupt(void) {
-	HAL_GPIO_TogglePin(RELAY_PORT[RELAY1], RELAY_PIN[RELAY1]);
+void relay_on(void) {
+	HAL_GPIO_WritePin(RELAY_PORT[RELAY1], RELAY_PIN[RELAY1], GPIO_PIN_SET);
+}
+
+void relay_off(void) {
+	HAL_GPIO_WritePin(RELAY_PORT[RELAY1], RELAY_PIN[RELAY1], GPIO_PIN_RESET);
 }
 
 void excuteRelayTest(void) {

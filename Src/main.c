@@ -226,7 +226,6 @@ static void EXTI4_15_IRQHandler_Config(void) {		// PIR Motion Sensor
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 }
 
-#if 1		//
 void HAL_GPIO_EXTI_Callback(uint16_t Action) {
 
 	uint8_t Detecting[] = "Detecting";
@@ -235,8 +234,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t Action) {
 	uint8_t extdoor_open[] = " EXT_DOOR OPEN";
 	uint8_t indoor_close[] = " IN_DOOR CLOSE";
 	uint8_t indoor_open[] = " IN_DOOR OPEN";
-
-#if 1
 
 	switch(HAL_GPIO_ReadPin(EXT_DOOR_PORT, EXT_DOOR_PIN)) {
 		case GPIO_PIN_SET	:
@@ -273,104 +270,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t Action) {
 		HAL_UART_Transmit(&huart1, (uint8_t*)Detecting, sizeof(Detecting), 10);		// TESTING
 		baby_state = BABY_IN;
 	}
-
-
-
-#else
-	switch(Action) {
-		case EXT_DOOR_OPEN	:
-
-			break;
-
-//		case INNER_DOOR_OPEN	:
-//			break;
-
-		case MOTION_DETECTING	:
-
-			break;
-
-		case USER_BUTTON_PIN	:
-
-			break;
-
-		default	:
-
-			break;
-	}
-
-
-	if(Action == EXT_DOOR_OPEN) {
-		HAL_UART_Transmit(&huart1, (uint8_t*)door_open, sizeof(door_open), 10);		// TESTING
-
-		if(tCurrent_state == tStandby_state) {		// Current state is "standby state"
-			switch(tCurrent_state->currentState) {
-				case STANDBY	:
-					tCurrent_state->extdoor_open();
-
-					tCurrent_state = tReady_state;			// Changing state	:Ready state
-					tCurrent_state->currentState = READY;
-
-					break;
-
-				default	:
-					break;
-			}
-		}
-
-	}
-
-
-
-	if(Action == USER_BUTTON_PIN){
-		HAL_UART_Transmit(&huart1, (uint8_t*)switch_open, sizeof(switch_open), 10);		// TESTING
-
-		switch(tCurrent_state->currentState) {
-			case READY	:
-				tReady_state->inner_door_open();
-				break;
-
-			default	:
-
-				break;
-		}
-
-
-
-	}
-
-	if(Action == MOTION_DETECTING) {
-		HAL_UART_Transmit(&huart1, (uint8_t*)door_close, sizeof(door_close), 10);		// TESTING
-		//tEnter_state->inner_door_open();
-	}
-#endif
-
 }
 
-#else		//
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-
-	uint8_t door_open[] = "DOOR_OPEN";
-	uint8_t switch_open[] = "SWITCH_OPEN";
-	uint8_t door_close[] = "DOOR_CLOSE";
-
-	//	HAL_UART_Transmit(&huart1, (uint8_t*)TxBuffer, sizeof(TxBuffer), 10);		// TESTING
-	if((GPIO_Pin == PIS1_PIN) && (doing_action == DOOR_CLOSE)) {
-		HAL_UART_Transmit(&huart1, (uint8_t*)door_open, sizeof(door_open), 10);		// TESTING
-		doing_action = DOOR_OPEN;
-	}
-
-	if((GPIO_Pin == USER_BUTTON_PIN) && (doing_action == DOOR_OPEN)) {
-		HAL_UART_Transmit(&huart1, (uint8_t*)switch_open, sizeof(switch_open), 10);		// TESTING
-		doing_action = SWITCH_OPEN;
-	}
-
-	if((GPIO_Pin == PIR1_SENSOR_PIN) && (doing_action == SWITCH_OPEN)) {
-		HAL_UART_Transmit(&huart1, (uint8_t*)door_close, sizeof(door_close), 10);		// TESTING
-		doing_action = DOOR_CLOSE;
-	}
-
-}
-#endif
 /* USER CODE END 4 */
 
 /**

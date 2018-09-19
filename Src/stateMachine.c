@@ -211,6 +211,7 @@ void PROTECTION_inner_door_open(void) {
 	LED_OFF(LED_BLUE);
 	LED_ON(LED_ORANGE);
 	baby_state = BABY_NONE;		// Initialize
+	relay_on();
 	if(innerdoor_state == INNER_DOOR_OPEN) {
 		changeingState = tConfirm_state;
 	}
@@ -292,6 +293,7 @@ void EXIT_inner_door_close(void) {
 	LED_ON(LED_GREEN);
 	LED_ON(LED_BLUE);
 	LED_OFF(LED_ORANGE);
+	relay_off();
 	baby_state = BABY_NONE;		// Initialize
 	if(innerdoor_state == INNER_DOOR_CLOSE) {		// <<---- Should be modify
 		changeingState = tStandby_state;
@@ -313,42 +315,3 @@ void EXIT_baby_in(void) {
 void EXIT_baby_none(void) {
 
 }
-
-
-#if 0
-//-----------------------------------------
-static void standby_inner_door_close() {
-
-	LED_ON(LED_RED);
-	LED_OFF(LED_GREEN);
-	LED_OFF(LED_BLUE);
-	LED_OFF(LED_ORANGE);
-}
-
-static void doing_ready_state() {
-
-	LED_OFF(LED_RED);
-	LED_ON(LED_GREEN);
-	LED_OFF(LED_BLUE);
-	LED_OFF(LED_ORANGE);
-}
-
-static void doing_running_state() {
-
-	LED_OFF(LED_RED);
-	LED_OFF(LED_GREEN);
-	LED_ON(LED_BLUE);
-	LED_OFF(LED_ORANGE);
-	excuteRelayTest_Interrupt();
-}
-
-static void doing_stop_state() {
-	LED_OFF(LED_RED);
-	LED_OFF(LED_GREEN);
-	LED_OFF(LED_BLUE);
-	LED_ON(LED_ORANGE);
-	excuteRelayTest_Interrupt();
-}
-#endif
-
-

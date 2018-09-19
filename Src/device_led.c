@@ -65,6 +65,7 @@ void LED_OFF(Led_TypeDef Led) {
 
 void LED_Toggle(Led_TypeDef Led) {
 	HAL_GPIO_TogglePin(LED_PORT[Led], LED_PIN[Led]);
+	HAL_Delay(500);
 }
 
 /**
