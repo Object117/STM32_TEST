@@ -38,8 +38,12 @@ typedef enum {
 
 void Relay_DeviceSetup(void);
 void Relay_Init(Relay_TypeDef relay);
-void relay_on(void);
-void relay_off(void);
+
+void lock_door(void);		// Relay 1
+void unlock_door(void);		// Relay 1
+
+void light_on(void);		// Relay 2
+void light_off(void);		// Relay 2
 
 void excuteRelayTest(void);
 

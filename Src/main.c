@@ -214,13 +214,13 @@ static void EXTI0_1_IRQHandler_Config(void) {		// User Button
 	HAL_NVIC_EnableIRQ(EXTI0_1_IRQn);
 }
 
-static void EXTI2_3_IRQHandler_Config(void) {		// Photo Interrupter
+static void EXTI2_3_IRQHandler_Config(void) {		//exteranl Photo Interrupter
 	/*Enable and set EXTI lines 2 to 3 Interrupt*/
 	HAL_NVIC_SetPriority(EXTI2_3_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
 }
 
-static void EXTI4_15_IRQHandler_Config(void) {		// PIR Motion Sensor
+static void EXTI4_15_IRQHandler_Config(void) {		// Inner Photo Interrupter // PIR Motion Sensor
 	/*Enable and set EXTI lines 4 to 15 Interrupt*/
 	HAL_NVIC_SetPriority(EXTI4_15_IRQn, 4, 0);
 	HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
@@ -229,26 +229,18 @@ static void EXTI4_15_IRQHandler_Config(void) {		// PIR Motion Sensor
 void HAL_GPIO_EXTI_Callback(uint16_t Action) {
 
 	uint8_t Detecting[] = "Detecting";
-	uint8_t exception[] = " exception";
-	uint8_t extdoor_close[] = " EXT_DOOR CLOSE";
-	uint8_t extdoor_open[] = " EXT_DOOR OPEN";
-	uint8_t indoor_close[] = " IN_DOOR CLOSE";
-	uint8_t indoor_open[] = " IN_DOOR OPEN";
 
 	switch(HAL_GPIO_ReadPin(EXT_DOOR_PORT, EXT_DOOR_PIN)) {
 		case GPIO_PIN_SET	:
 			extdoor_status = EXT_DOOR_CLOSE;
-//			HAL_UART_Transmit(&huart1, (uint8_t*)extdoor_close, sizeof(extdoor_close), 10);		// TESTING
 			break;
 
 		case GPIO_PIN_RESET	:
 			extdoor_status = EXT_DOOR_OPEN;
-//			HAL_UART_Transmit(&huart1, (uint8_t*)extdoor_open, sizeof(extdoor_open), 10);		// TESTING
 			break;
 
 		default		:	// exception
 			extdoor_status = EXT_DOOR_CLOSE;
-//			HAL_UART_Transmit(&huart1, (uint8_t*)exception, sizeof(exception), 10);		// TESTING
 			break;
 	}
 

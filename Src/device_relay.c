@@ -29,12 +29,20 @@ void Relay_Init(Relay_TypeDef relay) {
 	HAL_GPIO_WritePin(RELAY_PORT[relay], RELAY_PIN[relay], GPIO_PIN_RESET);
 }
 
-void relay_on(void) {
+void lock_door(void) {
 	HAL_GPIO_WritePin(RELAY_PORT[RELAY1], RELAY_PIN[RELAY1], GPIO_PIN_SET);
 }
 
-void relay_off(void) {
+void unlock_door(void) {
 	HAL_GPIO_WritePin(RELAY_PORT[RELAY1], RELAY_PIN[RELAY1], GPIO_PIN_RESET);
+}
+
+void light_on(void) {
+	HAL_GPIO_WritePin(RELAY_PORT[RELAY2], RELAY_PIN[RELAY2], GPIO_PIN_SET);
+}
+
+void light_off(void) {
+	HAL_GPIO_WritePin(RELAY_PORT[RELAY2], RELAY_PIN[RELAY2], GPIO_PIN_RESET);
 }
 
 void excuteRelayTest(void) {

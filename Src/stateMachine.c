@@ -69,12 +69,12 @@ USER_ACTION exit_functions = {EXIT		,
 };
 
 USER_ACTION emergency_functions = {EMERGENCY	,
-		EMER_inner_door_open	,
-		EMER_inner_door_close	,
-		EMER_extdoor_open	,
-		EMER_extdoor_close	,
-		EMER_baby_in	,
-		EMER_baby_none
+							EMER_inner_door_open	,
+							EMER_inner_door_close	,
+							EMER_extdoor_open	,
+							EMER_extdoor_close	,
+							EMER_baby_in	,
+							EMER_baby_none
 };
 
 USER_ACTION* tStandby_state = &standby_functions;
@@ -113,6 +113,7 @@ void STANDBY_inner_door_close(void) {
 	LED_OFF(LED_GREEN);
 	LED_OFF(LED_BLUE);
 	LED_OFF(LED_ORANGE);
+	light_off();
 }
 
 void STANDBY_extdoor_open(void) {
@@ -153,6 +154,7 @@ void READY_extdoor_open(void) {
 	LED_ON(LED_GREEN);
 	LED_OFF(LED_BLUE);
 	LED_OFF(LED_ORANGE);
+	light_on();
 }
 
 void READY_extdoor_close(void) {
@@ -221,7 +223,7 @@ void PROTECTION_inner_door_open(void) {
 	LED_OFF(LED_BLUE);
 	LED_ON(LED_ORANGE);
 	baby_state = BABY_NONE;		// Initialize
-	relay_on();
+	lock_door();
 	if(innerdoor_state == INNER_DOOR_OPEN) {
 		changeingState = tConfirm_state;
 	}
@@ -305,7 +307,7 @@ void EXIT_inner_door_close(void) {
 	LED_ON(LED_GREEN);
 	LED_ON(LED_BLUE);
 	LED_OFF(LED_ORANGE);
-	relay_off();
+	unlock_door();
 	baby_state = BABY_NONE;		// Initialize
 	if(innerdoor_state == INNER_DOOR_CLOSE) {		// <<---- Should be modify
 		changeingState = tStandby_state;
@@ -328,6 +330,13 @@ void EXIT_baby_none(void) {
 
 }
 
+/*
+ * EMERGENCY State		(NORMAL)
+ * --> Inner Door 'CLOSE'
+ * --> Ext Door 'OPEN'	// FORCE
+ * --> Baby 'NONE'		// hijacking??
+ * __________________________________________
+ */
 void EMER_inner_door_open(void) {
 
 }
