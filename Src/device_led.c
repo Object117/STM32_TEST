@@ -36,23 +36,30 @@ const uint16_t BUTTON_IRQn[BUTTONn] = {USER_BUTTON_EXTI_IRQn};
   * @retval None
   */
 
-void LED_Init(Led_TypeDef Led) {
-
+void LED_Init(Led_TypeDef Led1, Led_TypeDef Led2, Led_TypeDef Led3, Led_TypeDef Led4) {
 	GPIO_InitTypeDef GPIO_InitStruct;
 
 	/* Enable the GPIO_LED_Clock */
-	LEDx_GPIO_CLK_ENABLE(Led);
+	LEDx_GPIO_CLK_ENABLE(Led1);
+	LEDx_GPIO_CLK_ENABLE(Led2);
+	LEDx_GPIO_CLK_ENABLE(Led3);
+	LEDx_GPIO_CLK_ENABLE(Led4);
 
 	/* Configure the GPIO_LED Pin */
-	GPIO_InitStruct.Pin = LED_PIN[Led];
+	GPIO_InitStruct.Pin = LED_PIN[Led1] | LED_PIN[Led2] | LED_PIN[Led3] | LED_PIN[Led4];
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_PULLUP;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 
-	HAL_GPIO_Init(LED_PORT[Led], &GPIO_InitStruct);
+	HAL_GPIO_Init(LED_PORT[Led1], &GPIO_InitStruct);
+	HAL_GPIO_Init(LED_PORT[Led2], &GPIO_InitStruct);
+	HAL_GPIO_Init(LED_PORT[Led3], &GPIO_InitStruct);
+	HAL_GPIO_Init(LED_PORT[Led4], &GPIO_InitStruct);
 
-	HAL_GPIO_WritePin(LED_PORT[Led], LED_PIN[Led], GPIO_PIN_RESET);
-
+	HAL_GPIO_WritePin(LED_PORT[Led1], LED_PIN[Led1], GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_PORT[Led2], LED_PIN[Led2], GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_PORT[Led3], LED_PIN[Led3], GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_PORT[Led4], LED_PIN[Led4], GPIO_PIN_RESET);
 }
 
 void LED_ON(Led_TypeDef Led) {

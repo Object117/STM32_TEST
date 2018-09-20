@@ -103,7 +103,7 @@ typedef enum
 /** @defgroup STM32F072B_LED_Related_Function
   * @{
   */
-void LED_Init(Led_TypeDef Led);
+void LED_Init(Led_TypeDef Led1, Led_TypeDef Led2, Led_TypeDef Led3, Led_TypeDef Led4);
 void LED_ON(Led_TypeDef Led);
 void LED_OFF(Led_TypeDef Led);
 void LED_Toggle(Led_TypeDef Led);

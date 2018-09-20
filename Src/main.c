@@ -108,17 +108,18 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
+//  MX_GPIO_Init();		// no use GPIO_INIT(made by CubeMX)
   MX_I2C2_Init();
   MX_SPI2_Init();
   MX_TSC_Init();
   MX_USB_PCD_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  LED_Init(LED3);
+  LED_Init(LED_RED, LED_ORANGE, LED_GREEN,LED_BLUE);
   PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
   PIS_Init(PIS1);
   PIS_Init(PIS2);
+  PIR_Sensor_Init(PIR_SENSOR1);
   Relay_Init(RELAY1);
   Relay_Init(RELAY2);
   /* USER CODE END 2 */
@@ -133,14 +134,15 @@ int main(void)
   while (1)
   {
   /* USER CODE END WHILE */
+
   /* USER CODE BEGIN 3 */
-		tCurrent_state = change_state();
-		tCurrent_state->extdoor_open();
-		tCurrent_state->extdoor_close();
-		tCurrent_state->inner_door_open();
-		tCurrent_state->inner_door_close();
-		tCurrent_state->baby_in();
-		tCurrent_state->baby_none();
+	  tCurrent_state = change_state();
+	  tCurrent_state->extdoor_open();
+	  tCurrent_state->extdoor_close();
+	  tCurrent_state->inner_door_open();
+	  tCurrent_state->inner_door_close();
+	  tCurrent_state->baby_in();
+	  tCurrent_state->baby_none();
 
   }
   /* USER CODE END 3 */
